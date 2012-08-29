@@ -6,10 +6,7 @@ package cl.conexion;
 
 import cl.util.Archivo;
 import cl.util.Ruta;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -34,23 +31,22 @@ public class Conexion {
                 "&user="+datos.getUser()+"&pass="+datos.getPass()+"&executeQuery=1");
         URLConnection uc = url.openConnection();
         uc.connect();
-        StringBuilder contenido;
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()))) {
-            String linea;
-            contenido = new StringBuilder();
-            while ((linea = in.readLine()) != null) {
-                contenido.append(linea).append("\n");
-            }
-        }
-        if(!new File(Ruta.CARPETA_TEMP).exists()){
-            new File(Ruta.CARPETA_TEMP).mkdir();
-            
-        }
-        Archivo arXML = new Archivo(Ruta.ARCHIVO_TEMP);
-        arXML.escribirEnAchivo(contenido.toString(), true, false);
+        //        StringBuilder contenido;
+        //        try (BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()))) {
+        //            String linea;
+        //            contenido = new StringBuilder();
+        //            while ((linea = in.readLine()) != null) {
+        //                contenido.append(linea).append("\n");
+        //            }
+        //        }
+        //        if(!new File(Ruta.CARPETA_TEMP).exists()){
+        //            new File(Ruta.CARPETA_TEMP).mkdir();
+        //        }
+        //        Archivo arXML = new Archivo(Ruta.ARCHIVO_TEMP);
+        //        arXML.escribirEnAchivo(contenido.toString(), true, false);
+        InputStream inputStream = uc.getInputStream();
         
-        Resultado r = new Resultado(DOM.procesarArchivoXMLDom(arXML));
-        return r;
+        return new Resultado(DOM.procesarArchivoXMLDom(inputStream));
     }
 
     public boolean execute(String query) throws MalformedURLException, IOException, ParserConfigurationException, SAXException{
